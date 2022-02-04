@@ -1,22 +1,15 @@
-/**
- * TODO
- *  - set env var for component dir then open newly created files from yarn run in vscode
- *  - prettier story names
- *  - open newly created component in storybook
- */
-
-var fs = require('fs');
+var fs = require("fs");
 
 function toPascalCase(text) {
   return text.replace(/(^\w|-\w)/g, clearAndUpper);
 }
 
 function clearAndUpper(text) {
-  return text.replace(/-/, '').toUpperCase();
+  return text.replace(/-/, "").toUpperCase();
 }
 
 let componentsDir = undefined;
-const POTENTIAL_PATHS = ['./components', './src/components'];
+const POTENTIAL_PATHS = ["./components", "./src/components"];
 
 POTENTIAL_PATHS.some((path) => {
   if (fs.existsSync(path)) {
@@ -28,7 +21,7 @@ POTENTIAL_PATHS.some((path) => {
 
 const kebabComponentName = process.argv[3];
 if (!kebabComponentName) {
-  console.error('Please provide a component name');
+  console.error("Please provide a component name");
   return 0;
 }
 
@@ -44,7 +37,7 @@ try {
       `export interface ${componentName}Props {}\n`,
       `\n`,
       `export const ${componentName}: FC<${componentName}Props> = () => <></>;`,
-    ].join('')
+    ].join("")
   );
   fs.writeFileSync(
     `${componentsDir}/${kebabComponentName}/${kebabComponentName}.stories.tsx`,
@@ -60,7 +53,7 @@ try {
       `const Template: Story<${componentName}Props> = (args) => <${componentName} {...args} />;\n`,
       `export const Primary = Template.bind({});\n`,
       `Primary.args = {};`,
-    ].join('')
+    ].join("")
   );
 } catch (e) {
   console.log(e);
