@@ -19,7 +19,7 @@ POTENTIAL_PATHS.some((path) => {
   return false;
 });
 
-const kebabComponentName = process.argv[3];
+const kebabComponentName = process.argv[2];
 if (!kebabComponentName) {
   console.error("Please provide a component name");
   return 0;
