@@ -11,3 +11,9 @@ function bob {
   node ~/replaceme/bob.js $1
 }
 ```
+
+now within any project you can run
+
+```
+bob componentName
+```
