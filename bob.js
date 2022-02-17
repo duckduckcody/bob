@@ -1,22 +1,18 @@
 var fs = require('fs');
+const { exec } = require('child_process');
 
 const toPascalCase = (text) => text.replace(/(^\w|-\w)/g, clearAndUpper);
 
 const clearAndUpper = (text) => text.replace(/-/, '').toUpperCase();
 
-function toCapitalizedWords(name) {
-  var words = name.match(/[A-Za-z][a-z]*/g) || [];
+const capitalize = (word) => word.charAt(0).toUpperCase() + word.substring(1);
 
-  return words.map(capitalize).join(' ');
-}
-
-function capitalize(word) {
-  return word.charAt(0).toUpperCase() + word.substring(1);
-}
+const toCapitalizedWords = (name) =>
+  (name.match(/[A-Za-z][a-z]*/g) || []).map(capitalize).join(' ');
 
 let componentsDir = undefined;
 const POTENTIAL_PATHS = ['./components', './src/components'];
-
+// find the path to components dir
 POTENTIAL_PATHS.some((path) => {
   if (fs.existsSync(path)) {
     componentsDir = path;
@@ -25,20 +21,28 @@ POTENTIAL_PATHS.some((path) => {
   return false;
 });
 
+// get component name from first script argument
 const kebabComponentName = process.argv[2];
 if (!kebabComponentName) {
   console.error('Please provide a component name');
   return 0;
 }
 
-const componentName = toPascalCase(kebabComponentName);
+// get optional story dir from second script argument
+var storyDir = process.argv[3];
+if (storyDir === 'o') storyDir = 'organisms';
+if (storyDir === 'm') storyDir = 'modules';
+if (!storyDir) storyDir = 'atoms';
 
+const componentName = toPascalCase(kebabComponentName);
 const storybookName = toCapitalizedWords(componentName);
+const componentFileName = `${componentsDir}/${kebabComponentName}/${kebabComponentName}.tsx`;
+const storyFileName = `${componentsDir}/${kebabComponentName}/${kebabComponentName}.stories.tsx`;
 
 try {
   fs.mkdirSync(`${componentsDir}/${kebabComponentName}`);
   fs.writeFileSync(
-    `${componentsDir}/${kebabComponentName}/${kebabComponentName}.tsx`,
+    componentFileName,
     [
       `import { FC } from 'react';\n`,
       `\n`,
@@ -48,13 +52,13 @@ try {
     ].join('')
   );
   fs.writeFileSync(
-    `${componentsDir}/${kebabComponentName}/${kebabComponentName}.stories.tsx`,
+    storyFileName,
     [
       `import { Meta, Story } from '@storybook/react';\n`,
       `import { ${componentName}, ${componentName}Props } from './${kebabComponentName}';\n`,
       `\n`,
       `export default {\n`,
-      `  title: 'atoms/${storybookName}',\n`,
+      `  title: '${storyDir}/${storybookName}',\n`,
       `  component: ${componentName},\n`,
       `} as Meta;\n`,
       `\n`,
@@ -63,6 +67,10 @@ try {
       `Primary.args = {};`,
     ].join('')
   );
+  console.log('🔨 files made 🔨');
+
+  // open files when completed
+  exec(`code ./${storyFileName} && code ./${componentFileName}`);
 } catch (e) {
   console.log(e);
 }
