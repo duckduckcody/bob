@@ -1,3 +1,7 @@
+# Bob the Component Builder
+
+Stop making component boilerplate and let bob make it for you.
+
 ## Add to .rc
 
 Put this into ~/.bashrc or ~/.zshrc. Replacing the dir to where bob.js is located.
