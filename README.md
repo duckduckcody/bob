@@ -4,10 +4,10 @@
 
 ## Add to .rc
 
-put this into ~/.bashrc or ~/.zshrc file
+put this into ~/.bashrc or ~/.zshrc. Replacing the dir to where bob.js is located.
 
 ```
 function bob {
-  node ~/code/scripts/bob/bob.js $1
+  node ~/replaceme/bob.js $1
 }
 ```
