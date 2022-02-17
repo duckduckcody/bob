@@ -1,15 +1,21 @@
-var fs = require("fs");
+var fs = require('fs');
 
-function toPascalCase(text) {
-  return text.replace(/(^\w|-\w)/g, clearAndUpper);
+const toPascalCase = (text) => text.replace(/(^\w|-\w)/g, clearAndUpper);
+
+const clearAndUpper = (text) => text.replace(/-/, '').toUpperCase();
+
+function toCapitalizedWords(name) {
+  var words = name.match(/[A-Za-z][a-z]*/g) || [];
+
+  return words.map(capitalize).join(' ');
 }
 
-function clearAndUpper(text) {
-  return text.replace(/-/, "").toUpperCase();
+function capitalize(word) {
+  return word.charAt(0).toUpperCase() + word.substring(1);
 }
 
 let componentsDir = undefined;
-const POTENTIAL_PATHS = ["./components", "./src/components"];
+const POTENTIAL_PATHS = ['./components', './src/components'];
 
 POTENTIAL_PATHS.some((path) => {
   if (fs.existsSync(path)) {
@@ -21,11 +27,13 @@ POTENTIAL_PATHS.some((path) => {
 
 const kebabComponentName = process.argv[2];
 if (!kebabComponentName) {
-  console.error("Please provide a component name");
+  console.error('Please provide a component name');
   return 0;
 }
 
 const componentName = toPascalCase(kebabComponentName);
+
+const storybookName = toCapitalizedWords(componentName);
 
 try {
   fs.mkdirSync(`${componentsDir}/${kebabComponentName}`);
@@ -37,7 +45,7 @@ try {
       `export interface ${componentName}Props {}\n`,
       `\n`,
       `export const ${componentName}: FC<${componentName}Props> = () => <></>;`,
-    ].join("")
+    ].join('')
   );
   fs.writeFileSync(
     `${componentsDir}/${kebabComponentName}/${kebabComponentName}.stories.tsx`,
@@ -46,14 +54,14 @@ try {
       `import { ${componentName}, ${componentName}Props } from './${kebabComponentName}';\n`,
       `\n`,
       `export default {\n`,
-      `  title: 'atoms/${componentName}',\n`,
+      `  title: 'atoms/${storybookName}',\n`,
       `  component: ${componentName},\n`,
       `} as Meta;\n`,
       `\n`,
       `const Template: Story<${componentName}Props> = (args) => <${componentName} {...args} />;\n`,
       `export const Primary = Template.bind({});\n`,
       `Primary.args = {};`,
-    ].join("")
+    ].join('')
   );
 } catch (e) {
   console.log(e);
