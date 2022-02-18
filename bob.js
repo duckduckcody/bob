@@ -28,11 +28,13 @@ if (!kebabComponentName) {
   return 0;
 }
 
+console.log('process.argv', process.argv)
+
 // get optional story dir from second script argument
 var storyDir = process.argv[3];
 if (storyDir === 'o') storyDir = 'organisms';
 if (storyDir === 'm') storyDir = 'modules';
-if (!storyDir) storyDir = 'atoms';
+if (storyDir === undefined) storyDir = 'atoms';
 
 const componentName = toPascalCase(kebabComponentName);
 const storybookName = toCapitalizedWords(componentName);
