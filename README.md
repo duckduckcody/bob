@@ -33,3 +33,6 @@ The second argument is optional and defaults to `atoms`.
 `m` will create the component in the `modules` path.
 
 `o` will create the component in the `organisms` path.
+
+## TODO
+ - sanitise component names
