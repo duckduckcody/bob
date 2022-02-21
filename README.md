@@ -38,3 +38,4 @@ The second argument is optional and defaults to `atoms`.
 
 - sanitise component names
 - git workflow?
+- undo command, reverts last made component

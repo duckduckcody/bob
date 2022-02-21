@@ -47,7 +47,7 @@ try {
       `import { FC } from 'react';\n`,
       `import styled from 'styled-components';\n`,
       `\n`,
-      `const Container = styled.div``;\n`,
+      'const Container = styled.div``;\n',
       `\n`,
       `export interface ${componentName}Props {}\n`,
       `\n`,
