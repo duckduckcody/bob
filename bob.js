@@ -28,8 +28,6 @@ if (!kebabComponentName) {
   return 0;
 }
 
-console.log('process.argv', process.argv)
-
 // get optional story dir from second script argument
 var storyDir = process.argv[3];
 if (storyDir === 'o') storyDir = 'organisms';
@@ -47,10 +45,13 @@ try {
     componentFileName,
     [
       `import { FC } from 'react';\n`,
+      `import styled from 'styled-components';\n`,
+      `\n`,
+      `const Container = styled.div``;\n`,
       `\n`,
       `export interface ${componentName}Props {}\n`,
       `\n`,
-      `export const ${componentName}: FC<${componentName}Props> = () => <></>;`,
+      `export const ${componentName}: FC<${componentName}Props> = () => <Container></Container>;`,
     ].join('')
   );
   fs.writeFileSync(
