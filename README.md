@@ -35,4 +35,6 @@ The second argument is optional and defaults to `atoms`.
 `o` will create the component in the `organisms` path.
 
 ## TODO
- - sanitise component names
+
+- sanitise component names
+- git workflow?
