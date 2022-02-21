@@ -40,3 +40,4 @@ The second argument is optional and defaults to `atoms`.
 - git workflow?
 - undo command, reverts last made component
 - place all items in prop interface into exploded list in component
+- allow for a bob.config file
