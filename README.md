@@ -38,6 +38,7 @@ The second argument is optional and defaults to `atoms`.
 
 - sanitise component names
 - git workflow?
+- make a new branch
 - undo command, reverts last made component
 - place all items in prop interface into exploded list in component
 - allow for a bob.config file
