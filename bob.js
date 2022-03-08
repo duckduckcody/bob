@@ -49,9 +49,13 @@ try {
       `\n`,
       'const Container = styled.div``;\n',
       `\n`,
-      `export interface ${componentName}Props {}\n`,
+      `export interface ${componentName}Props {\n`,
+      `   className?: string;\n`,
+      `}\n`,
       `\n`,
-      `export const ${componentName}: FC<${componentName}Props> = () => <Container></Container>;`,
+      `export const ${componentName}: FC<${componentName}Props> = ({className}) => (\n`,
+      `   <Container className={className}></Container>\n`,
+      `);`,
     ].join('')
   );
   fs.writeFileSync(
