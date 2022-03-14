@@ -1,6 +1,12 @@
 var fs = require('fs');
 const { exec } = require('child_process');
 
+const readline = require('readline');
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
 const toPascalCase = (text) => text.replace(/(^\w|-\w)/g, clearAndUpper);
 
 const clearAndUpper = (text) => text.replace(/-/, '').toUpperCase();
@@ -25,7 +31,7 @@ POTENTIAL_PATHS.some((path) => {
 const kebabComponentName = process.argv[2];
 if (!kebabComponentName) {
   console.error('Please provide a component name');
-  return 0;
+  process.exit(0);
 }
 
 // get optional story dir from second script argument
@@ -34,46 +40,62 @@ if (storyDir === 'o') storyDir = 'organisms';
 if (storyDir === 'm') storyDir = 'modules';
 if (storyDir === undefined) storyDir = 'atoms';
 
-const componentName = toPascalCase(kebabComponentName);
-const storybookName = toCapitalizedWords(componentName);
-const componentFileName = `${componentsDir}/${kebabComponentName}/${kebabComponentName}.tsx`;
-const storyFileName = `${componentsDir}/${kebabComponentName}/${kebabComponentName}.stories.tsx`;
+let figmaLink = undefined;
+rl.question('What is the figma link?: ', (link) => {
+  figmaLink = link;
+  rl.close();
+});
 
-try {
-  fs.mkdirSync(`${componentsDir}/${kebabComponentName}`);
-  fs.writeFileSync(
-    componentFileName,
-    [
-      `import { FC } from 'react';\n`,
-      `import styled from 'styled-components';\n`,
-      `\n`,
-      'const Container = styled.div``;\n',
-      `\n`,
-      `export interface ${componentName}Props {}\n`,
-      `\n`,
-      `export const ${componentName}: FC<${componentName}Props> = () => <Container></Container>;`,
-    ].join('')
-  );
-  fs.writeFileSync(
-    storyFileName,
-    [
-      `import { Meta, Story } from '@storybook/react';\n`,
-      `import { ${componentName}, ${componentName}Props } from './${kebabComponentName}';\n`,
-      `\n`,
-      `export default {\n`,
-      `  title: '${storyDir}/${storybookName}',\n`,
-      `  component: ${componentName},\n`,
-      `} as Meta;\n`,
-      `\n`,
-      `const Template: Story<${componentName}Props> = (args) => <${componentName} {...args} />;\n`,
-      `export const Primary = Template.bind({});\n`,
-      `Primary.args = {};`,
-    ].join('')
-  );
-  console.log('🔨 files made 🔨');
+rl.on('close', () => {
+  const componentName = toPascalCase(kebabComponentName);
+  const storybookName = toCapitalizedWords(componentName);
+  const componentFileName = `${componentsDir}/${kebabComponentName}/${kebabComponentName}.tsx`;
+  const storyFileName = `${componentsDir}/${kebabComponentName}/${kebabComponentName}.stories.tsx`;
 
-  // open files when completed
-  exec(`code ./${storyFileName} && code ./${componentFileName}`);
-} catch (e) {
-  console.log(e);
-}
+  try {
+    fs.mkdirSync(`${componentsDir}/${kebabComponentName}`);
+    fs.writeFileSync(
+      componentFileName,
+      [
+        `import { FC } from 'react';\n`,
+        `import styled from 'styled-components';\n`,
+        `\n`,
+        'const Container = styled.div``;\n',
+        `\n`,
+        `export interface ${componentName}Props {}\n`,
+        `\n`,
+        `export const ${componentName}: FC<${componentName}Props> = () => <Container></Container>;`,
+      ].join('')
+    );
+    fs.writeFileSync(
+      storyFileName,
+      [
+        `import { Meta, Story } from '@storybook/react';\n`,
+        `import { withDesign } from 'storybook-addon-designs';\n`,
+        `import { ${componentName}, ${componentName}Props } from './${kebabComponentName}';\n`,
+        `\n`,
+        `export default {\n`,
+        `  title: '${storyDir}/${storybookName}',\n`,
+        `  component: ${componentName},\n`,
+        `  decorators: [withDesign],\n`,
+        `  parameters: {\n`,
+        `    design: {\n`,
+        `      type: 'figma',\n`,
+        `      url: '${figmaLink}',\n`,
+        `    },\n`,
+        `  },\n`,
+        `} as Meta;\n`,
+        `\n`,
+        `const Template: Story<${componentName}Props> = (args) => <${componentName} {...args} />;\n`,
+        `export const Primary = Template.bind({});\n`,
+        `Primary.args = {};`,
+      ].join('')
+    );
+    console.log('🔨 files made 🔨');
+
+    // open files when completed
+    exec(`code ./${storyFileName} && code ./${componentFileName}`);
+  } catch (e) {
+    console.log(e);
+  }
+});
