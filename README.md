@@ -36,6 +36,7 @@ The second argument is optional and defaults to `atoms`.
 
 ## TODO
 
+- `bob update` which just syncs with the main branch
 - sanitise component names
 - git workflow?
 - make a new branch (checkout dev, make name with feature/ prefix, publish branch, open new PR)
