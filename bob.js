@@ -62,32 +62,22 @@ rl.on('close', () => {
       componentFileName,
       [
         `import { FC } from 'react';\n`,
-        `import styled from 'styled-components';\n`,
         `\n`,
-        'const Container = styled.div``;\n',
         `\n`,
         `export interface ${componentName}Props {}\n`,
         `\n`,
-        `export const ${componentName}: FC<${componentName}Props> = () => <Container></Container>;`,
+        `export const ${componentName}: FC<${componentName}Props> = () => <div className=""></div>;`,
       ].join('')
     );
     fs.writeFileSync(
       storyFileName,
       [
         `import { Meta, Story } from '@storybook/react';\n`,
-        `import { withDesign } from 'storybook-addon-designs';\n`,
         `import { ${componentName}, ${componentName}Props } from './${componentName}';\n`,
         `\n`,
         `export default {\n`,
         `  title: '${storyDir}/${readableName}',\n`,
         `  component: ${componentName},\n`,
-        `  decorators: [withDesign],\n`,
-        `  parameters: {\n`,
-        `    design: {\n`,
-        `      type: 'figma',\n`,
-        `      url: '${figmaLink}',\n`,
-        `    },\n`,
-        `  },\n`,
         `} as Meta;\n`,
         `\n`,
         `const Template: Story<${componentName}Props> = (args) => <${componentName} {...args} />;\n`,
