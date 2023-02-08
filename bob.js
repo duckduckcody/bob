@@ -63,7 +63,6 @@ rl.on('close', () => {
       [
         `import { FC } from 'react';\n`,
         `\n`,
-        `\n`,
         `export interface ${componentName}Props {}\n`,
         `\n`,
         `export const ${componentName}: FC<${componentName}Props> = () => <div className=""></div>;`,
