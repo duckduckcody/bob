@@ -8,7 +8,7 @@ Put this into ~/.bashrc or ~/.zshrc. Replacing the dir to where bob.js is locate
 
 ```
 function bob {
-  node ~/replaceme/bob.js $1 $2
+  node ~/replaceme/bob/bob.js $1 $2
 }
 ```
 
