@@ -1,7 +1,7 @@
-var fs = require("fs");
-const { exec } = require("child_process");
+var fs = require('fs');
+const { exec } = require('child_process');
 
-const readline = require("readline");
+const readline = require('readline');
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
@@ -9,18 +9,18 @@ const rl = readline.createInterface({
 
 const toPascalCase = (text) => text.replace(/(^\w|-\w)/g, clearAndUpper);
 
-const clearAndUpper = (text) => text.replace(/-/, "").toUpperCase();
+const clearAndUpper = (text) => text.replace(/-/, '').toUpperCase();
 
 const capitalize = (word) => word.charAt(0).toUpperCase() + word.substring(1);
 
 const toCapitalizedWords = (name) =>
-  (name.match(/[A-Za-z][a-z]*/g) || []).map(capitalize).join(" ");
+  (name.match(/[A-Za-z][a-z]*/g) || []).map(capitalize).join(' ');
 
 let componentsDir = undefined;
 const POTENTIAL_PATHS = [
-  "./components",
-  "./src/components",
-  "./app/components",
+  './components',
+  './src/components',
+  './app/components',
 ];
 // find the path to components dir
 POTENTIAL_PATHS.some((path) => {
@@ -34,23 +34,23 @@ POTENTIAL_PATHS.some((path) => {
 // get component name from first script argument
 const componentNameInput = process.argv[2];
 if (!componentNameInput) {
-  console.error("Please provide a component name");
+  console.error('Please provide a component name');
   process.exit(0);
 }
 
 // get optional story dir from second script argument
 var storyDir = process.argv[3];
-if (storyDir === "o") storyDir = "organisms";
-if (storyDir === "m") storyDir = "modules";
-if (storyDir === undefined) storyDir = "atoms";
+if (storyDir === 'o') storyDir = 'organisms';
+if (storyDir === 'm') storyDir = 'modules';
+if (storyDir === undefined) storyDir = 'atoms';
 
 let figmaLink = undefined;
-rl.question("What is the figma link?: ", (link) => {
+rl.question('What is the figma link?: ', (link) => {
   figmaLink = link;
   rl.close();
 });
 
-rl.on("close", () => {
+rl.on('close', () => {
   const componentName = toPascalCase(componentNameInput);
   const readableName = toCapitalizedWords(componentName);
   const componentFileName = `${componentsDir}/${componentName}/${componentName}.tsx`;
@@ -64,12 +64,12 @@ rl.on("close", () => {
         `import { FC } from 'react';\n`,
         `import styled from 'styled-components';\n`,
         `\n`,
-        "const Container = styled.div``;\n",
+        'const Container = styled.div``;\n',
         `\n`,
         `export interface ${componentName}Props {}\n`,
         `\n`,
         `export const ${componentName}: FC<${componentName}Props> = () => <Container></Container>;`,
-      ].join("")
+      ].join('')
     );
     fs.writeFileSync(
       storyFileName,
@@ -93,9 +93,9 @@ rl.on("close", () => {
         `const Template: Story<${componentName}Props> = (args) => <${componentName} {...args} />;\n`,
         `export const Primary = Template.bind({});\n`,
         `Primary.args = {};`,
-      ].join("")
+      ].join('')
     );
-    console.log("🔨 files made 🔨");
+    console.log('🔨 files made 🔨');
 
     // open files when completed
     exec(`code ./${storyFileName} && code ./${componentFileName}`);
