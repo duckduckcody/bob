@@ -52,14 +52,14 @@ rl.question("What is the figma link?: ", (link) => {
 
 rl.on("close", () => {
   const componentName = toPascalCase(componentNameInput);
-  const readableName = toCapitalizedWords(componentName);
-  const componentFileName = `${componentsDir}/${componentName}/${componentName}.tsx`;
-  const storyFileName = `${componentsDir}/${componentName}/${componentName}.stories.tsx`;
+  const componentLocation = `${componentsDir}/${componentName}/${componentName}.tsx`;
+  const storyLocation = `${componentsDir}/${componentName}/${componentName}.stories.tsx`;
+  const testLocation = `${componentsDir}/${componentName}/${componentName}.test.tsx`;
 
   try {
     fs.mkdirSync(`${componentsDir}/${componentName}`);
     fs.writeFileSync(
-      componentFileName,
+      componentLocation,
       [
         `import { FC } from 'react';\n`,
         `\n`,
@@ -68,8 +68,9 @@ rl.on("close", () => {
         `export const ${componentName}: FC<${componentName}Props> = () => <div className=""></div>;`,
       ].join("")
     );
+
     fs.writeFileSync(
-      storyFileName,
+      storyLocation,
       [
         `import { Canvas, Meta, Story, ArgsTable } from "@storybook/addon-docs";`,
         `import { ${componentName} } from "./${componentName}";`,
@@ -88,11 +89,57 @@ rl.on("close", () => {
         `<ArgsTable of={${componentName}} />`,
       ].join("")
     );
+
+    fs.writeFileSync(
+      storyLocation,
+      [
+        `import { Canvas, Meta, Story, ArgsTable } from "@storybook/addon-docs";`,
+        `import { ${componentName} } from "./${componentName}";`,
+        `<Meta title="Atoms/${componentName}" component={${componentName}} />`,
+        `export const Template = (args) => (`,
+        `<div>`,
+        `<${componentName} {...args} />`,
+        `</div>`,
+        `);`,
+        `# ${componentName}`,
+        `<Canvas>`,
+        `<Story name="default" args={{}}>`,
+        `{Template.bind({})}`,
+        `</Story>`,
+        `</Canvas>`,
+        `<ArgsTable of={${componentName}} />`,
+      ].join("")
+    );
+
+    fs.writeFileSync(
+      storyLocation,
+      [
+        `
+        import { render } from "@testing-library/react";
+        import { axe } from "vitest-axe";
+        import { ${componentName} } from "./${componentName}";
+        describe("${componentName} component", () => {
+          it.concurrent("does not have accessibility violations", async () => {
+            const { baseElement } = render(
+              <main>
+                <${componentName} />
+              </main>
+            );
+            expect(await axe(baseElement)).toHaveNoViolations();
+          });
+        });
+        `,
+      ].join("")
+    );
+
     console.log("🔨 files made 🔨");
 
     // open files when completed
     exec(
-      `yarn prettier ./${storyFileName} -w && code ./${storyFileName} && code ./${componentFileName}`
+      `yarn prettier ./${storyLocation} -w && yarn prettier ./${componentLocation} -w && yarn prettier ./${testLocation} -w`
+    );
+    exec(
+      `code ./${storyLocation} && code ./${componentLocation} && code ./${testLocation}`
     );
   } catch (e) {
     console.log(e);
