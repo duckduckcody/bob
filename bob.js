@@ -66,6 +66,7 @@ try {
       `import { ${componentName} } from "./${componentName}";\n`,
       `\n`,
       `<Meta title="Atoms/${componentName}" component={${componentName}} />\n`,
+      `\n`,
       `export const Template = (args) => (\n`,
       `<div>\n`,
       `<${componentName} {...args} />\n`,
@@ -78,6 +79,7 @@ try {
       `{Template.bind({})}\n`,
       `</Story>\n`,
       `</Canvas>\n`,
+      `\n`,
       `<ArgsTable of={${componentName}} />\n`,
     ].join("")
   );
