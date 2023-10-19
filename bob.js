@@ -40,7 +40,7 @@ if (storyDir === undefined) storyDir = "atoms";
 
 const componentName = toPascalCase(componentNameInput);
 const componentLocation = `${componentsDir}/${componentName}/${componentName}.tsx`;
-const storyLocation = `${componentsDir}/${componentName}/${componentName}.stories.mdx`;
+const storyLocation = `${componentsDir}/${componentName}/${componentName}.stories.tsx`;
 const testLocation = `${componentsDir}/${componentName}/${componentName}.test.tsx`;
 
 try {
@@ -62,25 +62,19 @@ try {
   fs.writeFileSync(
     storyLocation,
     [
-      `import { Canvas, Meta, Story, ArgsTable } from "@storybook/addon-docs";\n`,
+      `import type { Meta, StoryObj } from '@storybook/react';\n`,
       `import { ${componentName} } from "./${componentName}";\n`,
       `\n`,
-      `<Meta title="Atoms/${componentName}" component={${componentName}} />\n`,
+      `const meta: Meta<typeof ${componentName}> = {
+        title: 'Common/${componentName}',
+        component: ${componentName},
+      };\n`,
+      `export default meta;\n`,
       `\n`,
-      `export const Template = (args) => (\n`,
-      `<div>\n`,
-      `<${componentName} {...args} />\n`,
-      `</div>\n`,
-      `);\n`,
-      `\n`,
-      `# ${componentName}\n`,
-      `<Canvas>\n`,
-      `<Story name="default" args={{}}>\n`,
-      `{Template.bind({})}\n`,
-      `</Story>\n`,
-      `</Canvas>\n`,
-      `\n`,
-      `<ArgsTable of={${componentName}} />\n`,
+      `type Story = StoryObj<typeof ${componentName}>;\n`,
+      `export const Default: Story = {
+        args: {},
+      };`,
     ].join("")
   );
 
@@ -99,7 +93,7 @@ try {
       `<${componentName} />`,
       `</main>`,
       `);`,
-      `expect(await axe(baseElement)).toHaveNoViolations();`,
+      `await expect(axe(baseElement)).resolves.toHaveNoViolations();`,
       `});`,
       `});`,
     ].join("")
