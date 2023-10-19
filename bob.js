@@ -63,6 +63,7 @@ try {
     storyLocation,
     [
       `import type { Meta, StoryObj } from '@storybook/react';\n`,
+      `\n`,
       `import { ${componentName} } from "./${componentName}";\n`,
       `\n`,
       `const meta: Meta<typeof ${componentName}> = {
@@ -85,7 +86,8 @@ try {
       `import { render } from "@testing-library/react";`,
       `import { axe } from "vitest-axe";\n`,
       `\n`,
-      `import { ${componentName} } from "./${componentName}";`,
+      `import { ${componentName} } from "./${componentName}";\n`,
+      `\n`,
       `describe("${componentName} component", () => {`,
       `it.concurrent("does not have accessibility violations", async () => {`,
       `const { baseElement } = render(`,
@@ -99,8 +101,6 @@ try {
     ].join("")
   );
 
-  console.log("🔨 files made 🔨");
-
   // format files
   exec(`yarn prettier ./${componentsDir}/${componentName}/ --write`);
 
@@ -110,4 +110,6 @@ try {
   );
 } catch (e) {
   console.log(e);
+} finally {
+  console.log("🔨 files made 🔨");
 }
